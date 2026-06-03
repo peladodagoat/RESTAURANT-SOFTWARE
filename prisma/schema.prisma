@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model MenuItem {
+  id          String      @id @default(cuid())
+  name        String
+  description String
+  price       Float
+  category    Category
+  image       String?
+  allergens   String[]
+  available   Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  orderItems  OrderItem[]
+}
+
+model Order {
+  id            String        @id @default(cuid())
+  tableId       String
+  status        OrderStatus   @default(PENDING)
+  paymentMethod PaymentMethod
+  total         Float
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  items         OrderItem[]
+}
+
+model OrderItem {
+  id                  String    @id @default(cuid())
+  orderId             String
+  menuItemId          String
+  quantity            Int
+  specialInstructions String?
+  price               Float
+  order               Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItem            MenuItem  @relation(fields: [menuItemId], references: [id])
+}
+
+enum Category {
+  STARTERS
+  MAINS
+  DESSERTS
+  DRINKS
+}
+
+enum OrderStatus {
+  PENDING
+  IN_PROGRESS
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  APPLE_PAY
+  COUNTER
+}
