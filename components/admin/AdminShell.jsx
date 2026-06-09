@@ -47,7 +47,13 @@ export default function AdminShell({ children }) {
             </Link>
           ))}
         </nav>
-        <div className="px-3 pb-4">
+        <div className="px-3 pb-4 space-y-1">
+          <Link
+            href="/menu?table=1"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-stone-300 hover:bg-stone-800 transition-colors"
+          >
+            <span>🏠</span> User Portal
+          </Link>
           <button
             onClick={logout}
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-stone-400 hover:bg-stone-800 transition-colors"
