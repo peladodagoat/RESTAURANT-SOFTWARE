@@ -8,21 +8,31 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        brand: {
-          50:  '#fdf8f0',
-          100: '#faefd9',
-          200: '#f4d9a8',
-          300: '#edbe6e',
-          400: '#e59d3a',
-          500: '#d4821a',
-          600: '#b86614',
-          700: '#964e13',
-          800: '#7a3f16',
-          900: '#643515',
+        surface: {
+          base:     '#0d0d0f',
+          card:     '#17171b',
+          elevated: '#1f1f25',
+          border:   '#2e2e38',
+        },
+        ink: {
+          primary:   '#f4f4f6',
+          secondary: '#8b8b9e',
+          muted:     '#52526a',
+        },
+        gold: {
+          DEFAULT: '#c8853a',
+          light:   '#d9994f',
+          dark:    '#a86b2a',
+          glow:    'rgba(200,133,58,0.15)',
         },
       },
       fontFamily: {
-        serif: ['Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
+        sans:  ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-dm-serif)', 'Georgia', 'serif'],
+      },
+      boxShadow: {
+        'glow-gold': '0 0 24px rgba(200,133,58,0.2)',
+        'card':      '0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.6)',
       },
     },
   },

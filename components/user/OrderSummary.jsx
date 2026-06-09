@@ -1,62 +1,48 @@
 'use client';
 
-export default function OrderSummary({ cart, total, tableId, onBack, onConfirm, onAdd, onRemove }) {
-  return (
-    <div className="pt-6">
-      <button onClick={onBack} className="text-sm text-stone-500 hover:text-brand-600 mb-6 flex items-center gap-1">
-        ← Back to Menu
-      </button>
+import { useLang } from '@/lib/LanguageContext';
 
-      <h2 className="text-xl font-serif font-bold text-stone-900 mb-6">Your Order — Table {tableId}</h2>
+export default function OrderSummary({ cart, total, tableId, onBack, onConfirm, onAdd, onRemove }) {
+  const { t } = useLang();
+
+  return (
+    <div className="pt-6 max-w-lg mx-auto animate-slide-up">
+      <button onClick={onBack} className="text-sm text-ink-secondary hover:text-gold mb-6 flex items-center gap-1 transition-colors">
+        {t('backToMenu')}
+      </button>
+      <h2 className="font-serif text-2xl font-bold text-ink-primary mb-1">{t('yourOrder')}</h2>
+      <p className="text-ink-muted text-sm mb-6">{t('table')} {tableId}</p>
 
       <div className="space-y-3 mb-6">
         {cart.map((c) => (
-          <div key={`${c.menuItemId}-${c.specialInstructions}`} className="bg-white rounded-xl p-4 border border-stone-100 flex items-center justify-between">
-            <div className="flex-1">
-              <p className="font-semibold text-sm text-stone-900">{c.item.name}</p>
-              {c.specialInstructions && (
-                <p className="text-xs text-stone-400 mt-0.5 italic">"{c.specialInstructions}"</p>
-              )}
-              <p className="text-xs text-stone-500 mt-0.5">${c.item.price.toFixed(2)} each</p>
+          <div key={`${c.menuItemId}-${c.specialInstructions}`} className="bg-surface-card border border-surface-border rounded-2xl p-4 flex items-center gap-4">
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-sm text-ink-primary truncate">{c.item.name}</p>
+              {c.specialInstructions && <p className="text-xs text-ink-muted italic mt-0.5 truncate">"{c.specialInstructions}"</p>}
+              <p className="text-xs text-ink-muted mt-0.5">${c.item.price.toFixed(2)} {t('each')}</p>
             </div>
-            <div className="flex items-center gap-3 ml-4">
-              <button
-                onClick={() => onRemove(c.menuItemId, c.specialInstructions)}
-                className="w-7 h-7 rounded-full bg-stone-100 text-stone-700 font-bold hover:bg-stone-200 transition-colors flex items-center justify-center"
-              >
-                −
-              </button>
-              <span className="font-bold text-brand-700 w-4 text-center">{c.quantity}</span>
-              <button
-                onClick={() => onAdd(c.item, c.specialInstructions)}
-                className="w-7 h-7 rounded-full bg-brand-600 text-white font-bold hover:bg-brand-700 transition-colors flex items-center justify-center"
-              >
-                +
-              </button>
-              <span className="font-semibold text-stone-800 w-16 text-right">
-                ${(c.item.price * c.quantity).toFixed(2)}
-              </span>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <button onClick={() => onRemove(c.menuItemId, c.specialInstructions)} className="w-7 h-7 rounded-full bg-surface-elevated border border-surface-border text-ink-secondary hover:border-gold hover:text-gold transition-colors flex items-center justify-center text-sm">−</button>
+              <span className="font-bold text-gold w-4 text-center text-sm">{c.quantity}</span>
+              <button onClick={() => onAdd(c.item, c.specialInstructions)} className="w-7 h-7 rounded-full bg-gold text-surface-base font-bold hover:bg-gold-light transition-colors flex items-center justify-center text-sm">+</button>
             </div>
+            <span className="font-semibold text-ink-primary w-14 text-right text-sm flex-shrink-0">${(c.item.price * c.quantity).toFixed(2)}</span>
           </div>
         ))}
       </div>
 
-      <div className="bg-white rounded-xl border border-stone-100 p-4 mb-8">
-        <div className="flex justify-between text-stone-600 text-sm mb-2">
-          <span>Subtotal</span>
-          <span>${total.toFixed(2)}</span>
+      <div className="bg-surface-card border border-surface-border rounded-2xl p-4 mb-8">
+        <div className="flex justify-between text-ink-secondary text-sm mb-2">
+          <span>{t('subtotal')}</span><span>${total.toFixed(2)}</span>
         </div>
-        <div className="flex justify-between font-bold text-lg text-stone-900 border-t border-stone-100 pt-2">
-          <span>Total</span>
-          <span className="text-brand-700">${total.toFixed(2)}</span>
+        <div className="flex justify-between font-bold text-base text-ink-primary border-t border-surface-border pt-3">
+          <span>{t('total')}</span>
+          <span className="text-gold">${total.toFixed(2)}</span>
         </div>
       </div>
 
-      <button
-        onClick={onConfirm}
-        className="w-full bg-brand-600 text-white py-4 rounded-2xl font-bold text-lg hover:bg-brand-700 transition-colors shadow-lg"
-      >
-        Proceed to Payment
+      <button onClick={onConfirm} className="w-full bg-gold text-surface-base py-4 rounded-2xl font-bold text-base hover:bg-gold-light transition-colors shadow-glow-gold">
+        {t('proceedToPayment')}
       </button>
     </div>
   );
