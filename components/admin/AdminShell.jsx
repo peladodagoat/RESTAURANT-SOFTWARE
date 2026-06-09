@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import clsx from 'clsx';
+import Footer from '@/components/Footer';
 
 const NAV = [
   { href: '/admin/dashboard', label: 'Dashboard',    icon: '📊' },
@@ -90,8 +91,9 @@ export default function AdminShell({ children }) {
       )}
 
       {/* Main content */}
-      <div className="md:ml-56 flex-1 min-h-screen">
-        <main className="p-4 md:p-6 pt-16 md:pt-6">{children}</main>
+      <div className="md:ml-56 flex-1 min-h-screen flex flex-col">
+        <main className="flex-1 p-4 md:p-6 pt-16 md:pt-6">{children}</main>
+        <Footer />
       </div>
     </div>
   );

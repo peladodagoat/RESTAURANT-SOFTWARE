@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLang } from '@/lib/LanguageContext';
+import Footer from '@/components/Footer';
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -29,7 +30,8 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-surface-base flex items-center justify-center px-4 font-sans">
+    <div className="min-h-screen bg-surface-base flex flex-col font-sans">
+      <div className="flex-1 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-sm animate-slide-up">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -73,6 +75,8 @@ export default function AdminLogin() {
           <p className="text-xs text-ink-muted text-center mt-5">{t('adminDemoHint')}</p>
         </div>
       </div>
+      </div>
+      <Footer />
     </div>
   );
 }

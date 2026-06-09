@@ -6,6 +6,7 @@ import MenuDisplay from '@/components/user/MenuDisplay';
 import Cart from '@/components/user/Cart';
 import OrderSummary from '@/components/user/OrderSummary';
 import PaymentScreen from '@/components/user/PaymentScreen';
+import Footer from '@/components/Footer';
 import { useLang } from '@/lib/LanguageContext';
 
 function MenuPage() {
@@ -123,6 +124,8 @@ function MenuPage() {
           </div>
         )}
       </main>
+
+      <Footer />
 
       {/* Floating cart */}
       {step === 'menu' && cartCount > 0 && (
