@@ -91,16 +91,21 @@ function MenuPage() {
     <div className="min-h-screen bg-stone-50">
       {/* Header */}
       <header className="bg-white border-b border-stone-200 sticky top-0 z-40 shadow-sm">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-serif font-bold text-brand-700">Bella Vista</h1>
-            <p className="text-xs text-stone-500">Table {tableId}</p>
+            <p className="text-xs text-stone-500">Table {tableId} · Authentic Italian Cuisine</p>
           </div>
-          <p className="text-sm text-stone-500 italic">Authentic Italian Cuisine</p>
+          <a
+            href="/admin"
+            className="flex items-center gap-2 bg-stone-900 text-white text-sm font-semibold px-4 py-2 rounded-full hover:bg-stone-700 transition-colors"
+          >
+            <span>🔐</span> Staff Login
+          </a>
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-4 pb-36">
+      <main className="max-w-5xl mx-auto px-4 pb-36">
         {step === 'menu' && (
           <MenuDisplay
             items={menuItems}
@@ -148,7 +153,7 @@ function MenuPage() {
         <div className="fixed bottom-6 left-0 right-0 flex justify-center z-50 px-4">
           <button
             onClick={() => setStep('summary')}
-            className="bg-brand-600 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 hover:bg-brand-700 transition-colors w-full max-w-sm"
+            className="bg-brand-600 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 hover:bg-brand-700 transition-colors w-full max-w-md"
           >
             <span className="bg-white text-brand-700 rounded-full w-7 h-7 flex items-center justify-center font-bold text-sm">
               {cartCount}
