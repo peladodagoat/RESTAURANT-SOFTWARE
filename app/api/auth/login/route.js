@@ -4,8 +4,8 @@ import { signToken } from '@/lib/auth';
 export async function POST(request) {
   const { username, password } = await request.json();
 
-  const validUsername = process.env.ADMIN_USERNAME || 'admin';
-  const validPassword = process.env.ADMIN_PASSWORD || 'admin123';
+  const validUsername = 'admin';
+  const validPassword = 'admin123';
 
   if (username !== validUsername || password !== validPassword) {
     return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
