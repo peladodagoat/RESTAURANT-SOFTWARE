@@ -1,49 +1,32 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { requireAdmin } from '@/lib/auth';
+import { demoOrders, menuItems } from '@/lib/mockData';
 
-export async function GET(request) {
-  const admin = await requireAdmin(request);
-  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-  const { searchParams } = new URL(request.url);
-  const status = searchParams.get('status');
-  const where = status ? { status } : { status: { not: 'CANCELLED' } };
-
-  const orders = await prisma.order.findMany({
-    where,
-    include: { items: { include: { menuItem: true } } },
-    orderBy: { createdAt: 'desc' },
-  });
-  return NextResponse.json(orders);
+export async function GET() {
+  return NextResponse.json(demoOrders);
 }
 
 export async function POST(request) {
   const data = await request.json();
-
-  const menuItems = await prisma.menuItem.findMany({
-    where: { id: { in: data.items.map((i) => i.menuItemId) } },
-  });
-
   const itemMap = Object.fromEntries(menuItems.map((m) => [m.id, m]));
-  const total = data.items.reduce((sum, i) => sum + itemMap[i.menuItemId].price * i.quantity, 0);
+  const total = data.items.reduce((sum, i) => sum + (itemMap[i.menuItemId]?.price || 0) * i.quantity, 0);
 
-  const order = await prisma.order.create({
-    data: {
-      tableId: data.tableId,
-      paymentMethod: data.paymentMethod,
-      total,
-      items: {
-        create: data.items.map((i) => ({
-          menuItemId: i.menuItemId,
-          quantity: i.quantity,
-          specialInstructions: i.specialInstructions || null,
-          price: itemMap[i.menuItemId].price,
-        })),
-      },
-    },
-    include: { items: { include: { menuItem: true } } },
-  });
+  const order = {
+    id: `order${Date.now()}`,
+    tableId: data.tableId,
+    status: 'PENDING',
+    paymentMethod: data.paymentMethod,
+    total,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    items: data.items.map((i) => ({
+      id: `oi${Date.now()}${Math.random()}`,
+      menuItemId: i.menuItemId,
+      quantity: i.quantity,
+      specialInstructions: i.specialInstructions || null,
+      price: itemMap[i.menuItemId]?.price || 0,
+      menuItem: { name: itemMap[i.menuItemId]?.name || '', price: itemMap[i.menuItemId]?.price || 0 },
+    })),
+  };
 
   return NextResponse.json(order, { status: 201 });
 }

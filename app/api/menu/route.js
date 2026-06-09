@@ -1,31 +1,17 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { requireAdmin } from '@/lib/auth';
+import { menuItems } from '@/lib/mockData';
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const category = searchParams.get('category');
-
-  const where = category ? { category: category.toUpperCase(), available: true } : { available: true };
-  const items = await prisma.menuItem.findMany({ where, orderBy: { createdAt: 'asc' } });
+  const items = category
+    ? menuItems.filter((i) => i.category === category.toUpperCase() && i.available)
+    : menuItems.filter((i) => i.available);
   return NextResponse.json(items);
 }
 
 export async function POST(request) {
-  const admin = await requireAdmin(request);
-  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
   const data = await request.json();
-  const item = await prisma.menuItem.create({
-    data: {
-      name: data.name,
-      description: data.description,
-      price: parseFloat(data.price),
-      category: data.category,
-      image: data.image || null,
-      allergens: data.allergens || [],
-      available: data.available !== false,
-    },
-  });
-  return NextResponse.json(item, { status: 201 });
+  const newItem = { ...data, id: `m${Date.now()}`, available: data.available !== false };
+  return NextResponse.json(newItem, { status: 201 });
 }
