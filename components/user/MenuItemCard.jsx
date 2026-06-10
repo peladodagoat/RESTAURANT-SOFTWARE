@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useLang } from '@/lib/LanguageContext';
 
 export default function MenuItemCard({ item, quantity, onAdd, onRemove }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
 
   return (
     <div className="bg-surface-card border border-surface-border rounded-2xl overflow-hidden shadow-card hover:border-gold/40 transition-all duration-200 group">
@@ -25,7 +25,9 @@ export default function MenuItemCard({ item, quantity, onAdd, onRemove }) {
           <h3 className="font-serif text-base font-bold text-ink-primary leading-snug">{item.name}</h3>
           <span className="font-bold text-gold text-base whitespace-nowrap flex-shrink-0">${item.price.toFixed(2)}</span>
         </div>
-        <p className="text-xs text-ink-secondary leading-relaxed mb-3 line-clamp-2">{item.description}</p>
+        <p className="text-xs text-ink-secondary leading-relaxed mb-3 line-clamp-2">
+          {lang === 'es' && item.descriptionEs ? item.descriptionEs : item.description}
+        </p>
         {item.allergens?.length > 0 && (
           <p className="text-xs text-amber-500/80 mb-3">⚠ {t('contains')}: {item.allergens.join(', ')}</p>
         )}

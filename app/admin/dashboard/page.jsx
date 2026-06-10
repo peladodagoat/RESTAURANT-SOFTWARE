@@ -17,10 +17,10 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetch(`/api/analytics/revenue?period=${period}`).then((r) => r.json()).then(setRevenue);
+    fetch(`/api/analytics/top-items?period=${period}`).then((r) => r.json()).then(setTopItems);
   }, [period]);
 
   useEffect(() => {
-    fetch('/api/analytics/top-items').then((r) => r.json()).then(setTopItems);
     fetch('/api/orders').then((r) => r.json()).then(setOrders);
   }, []);
 
@@ -65,7 +65,9 @@ export default function Dashboard() {
           </div>
 
           <div className="bg-surface-card border border-surface-border rounded-2xl p-5">
-            <h3 className="font-semibold text-ink-primary mb-4">🏆 Most Ordered Items</h3>
+            <h3 className="font-semibold text-ink-primary mb-4">
+              🏆 Most Ordered — {PERIODS.find(p => p.key === period)?.label}
+            </h3>
             <TopItemsTable items={topItems} />
           </div>
         </>

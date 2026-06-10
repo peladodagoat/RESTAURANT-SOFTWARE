@@ -7,9 +7,10 @@ import clsx from 'clsx';
 import Footer from '@/components/Footer';
 
 const NAV = [
-  { href: '/admin/dashboard', label: 'Dashboard',    icon: '📊' },
-  { href: '/admin/orders',    label: 'Live Orders',  icon: '🗂️' },
-  { href: '/admin/menu',      label: 'Menu',         icon: '🍽️' },
+  { href: '/admin/dashboard', label: 'Dashboard',   icon: '📊' },
+  { href: '/admin/orders',    label: 'Live Orders', icon: '🗂️' },
+  { href: '/admin/receipts',  label: 'Receipts',    icon: '🧾' },
+  { href: '/admin/menu',      label: 'Menu',        icon: '🍽️' },
 ];
 
 export default function AdminShell({ children }) {
