@@ -1,6 +1,7 @@
 'use client';
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useLang } from '@/lib/LanguageContext';
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload?.length) {
@@ -15,8 +16,10 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 export default function RevenueChart({ data }) {
+  const { t } = useLang();
+
   if (!data || data.length === 0) {
-    return <p className="text-ink-muted text-sm text-center py-8">No revenue data for this period.</p>;
+    return <p className="text-ink-muted text-sm text-center py-8">{t('noRevenueData')}</p>;
   }
 
   return (

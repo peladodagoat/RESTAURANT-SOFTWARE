@@ -2,13 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import OrderCard from '@/components/admin/OrderCard';
+import { useLang } from '@/lib/LanguageContext';
 
 const FILTERS = ['ALL', 'PENDING', 'IN_PROGRESS', 'DELIVERED'];
+const FILTER_KEYS = {
+  ALL: 'filterAll', PENDING: 'filterPending', IN_PROGRESS: 'filterInProgress', DELIVERED: 'filterDelivered',
+};
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [filter, setFilter] = useState('ALL');
   const [loading, setLoading] = useState(true);
+  const { t } = useLang();
 
   useEffect(() => {
     fetch('/api/orders')
@@ -16,7 +21,6 @@ export default function OrdersPage() {
       .then((data) => { setOrders(data); setLoading(false); });
   }, []);
 
-  // Update status locally — instant, no DB required
   const updateStatus = (id, status) => {
     setOrders((prev) =>
       prev.map((o) => o.id === id ? { ...o, status, updatedAt: new Date().toISOString() } : o)
@@ -32,7 +36,6 @@ export default function OrdersPage() {
 
   const displayed = filter === 'ALL' ? orders : orders.filter((o) => o.status === filter);
 
-  // Sort: PENDING first, then IN_PROGRESS, then DELIVERED
   const ORDER_PRIORITY = { PENDING: 0, IN_PROGRESS: 1, DELIVERED: 2, CANCELLED: 3 };
   const sorted = [...displayed].sort((a, b) => {
     const diff = ORDER_PRIORITY[a.status] - ORDER_PRIORITY[b.status];
@@ -43,9 +46,9 @@ export default function OrdersPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6 gap-3 flex-wrap">
-        <h2 className="text-2xl font-serif font-bold text-ink-primary">Live Orders</h2>
+        <h2 className="text-2xl font-serif font-bold text-ink-primary">{t('liveOrdersTitle')}</h2>
         <span className="text-xs text-ink-muted bg-surface-card border border-surface-border px-3 py-1 rounded-full">
-          {counts.PENDING} pending · {counts.IN_PROGRESS} in progress · {counts.DELIVERED} delivered
+          {counts.PENDING} {t('filterPending').toLowerCase()} · {counts.IN_PROGRESS} {t('filterInProgress').toLowerCase()} · {counts.DELIVERED} {t('filterDelivered').toLowerCase()}
         </span>
       </div>
 
@@ -61,7 +64,7 @@ export default function OrdersPage() {
                 : 'bg-surface-card border border-surface-border text-ink-secondary hover:border-gold hover:text-gold'
             }`}
           >
-            {s === 'IN_PROGRESS' ? 'In Progress' : s === 'ALL' ? 'All' : s.charAt(0) + s.slice(1).toLowerCase()}
+            {t(FILTER_KEYS[s])}
             {counts[s] > 0 && (
               <span className={`text-xs rounded-full px-1.5 ${filter === s ? 'bg-surface-base text-gold' : 'bg-surface-elevated text-ink-muted'}`}>
                 {counts[s]}
@@ -72,11 +75,11 @@ export default function OrdersPage() {
       </div>
 
       {loading ? (
-        <p className="text-ink-muted animate-pulse text-sm">Loading orders…</p>
+        <p className="text-ink-muted animate-pulse text-sm">{t('loadingOrders')}</p>
       ) : sorted.length === 0 ? (
         <div className="text-center py-20 text-ink-muted">
           <div className="text-4xl mb-3">📭</div>
-          <p className="text-sm">No orders found.</p>
+          <p className="text-sm">{t('noOrdersFound')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

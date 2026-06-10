@@ -1,10 +1,14 @@
 'use client';
 
-const CAT_LABELS = { STARTERS: 'Starters', MAINS: 'Mains', DESSERTS: 'Desserts', DRINKS: 'Drinks' };
+import { useLang } from '@/lib/LanguageContext';
+
+const CAT_KEYS = { STARTERS: 'starters', MAINS: 'mains', DESSERTS: 'desserts', DRINKS: 'drinks' };
 
 export default function TopItemsTable({ items }) {
+  const { t } = useLang();
+
   if (!items || items.length === 0) {
-    return <p className="text-ink-muted text-sm text-center py-8">No orders yet.</p>;
+    return <p className="text-ink-muted text-sm text-center py-8">{t('noOrdersYet')}</p>;
   }
 
   return (
@@ -13,10 +17,10 @@ export default function TopItemsTable({ items }) {
         <thead>
           <tr className="text-left text-ink-muted border-b border-surface-border">
             <th className="pb-3 pr-4 font-medium">#</th>
-            <th className="pb-3 pr-4 font-medium">Item</th>
-            <th className="pb-3 pr-4 font-medium">Category</th>
-            <th className="pb-3 pr-4 font-medium text-right">Orders</th>
-            <th className="pb-3 font-medium text-right">Revenue</th>
+            <th className="pb-3 pr-4 font-medium">{t('colName')}</th>
+            <th className="pb-3 pr-4 font-medium">{t('colCategory')}</th>
+            <th className="pb-3 pr-4 font-medium text-right">{t('colOrders')}</th>
+            <th className="pb-3 font-medium text-right">{t('statRevenue')}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-surface-border">
@@ -24,7 +28,7 @@ export default function TopItemsTable({ items }) {
             <tr key={item.id} className="hover:bg-surface-elevated/50 transition-colors">
               <td className="py-3 pr-4 text-ink-muted font-medium">{item.rank}</td>
               <td className="py-3 pr-4 font-semibold text-ink-primary">{item.name}</td>
-              <td className="py-3 pr-4 text-ink-secondary">{CAT_LABELS[item.category] || item.category}</td>
+              <td className="py-3 pr-4 text-ink-secondary">{CAT_KEYS[item.category] ? t(CAT_KEYS[item.category]) : item.category}</td>
               <td className="py-3 pr-4 text-right font-bold text-gold">{item.totalOrders}</td>
               <td className="py-3 text-right text-ink-secondary">${item.revenue.toFixed(2)}</td>
             </tr>

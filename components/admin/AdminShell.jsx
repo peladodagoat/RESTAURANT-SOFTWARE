@@ -5,18 +5,20 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import Footer from '@/components/Footer';
+import { useLang } from '@/lib/LanguageContext';
 
 const NAV = [
-  { href: '/admin/dashboard', label: 'Dashboard',   icon: '📊' },
-  { href: '/admin/orders',    label: 'Live Orders', icon: '🗂️' },
-  { href: '/admin/receipts',  label: 'Receipts',    icon: '🧾' },
-  { href: '/admin/menu',      label: 'Menu',        icon: '🍽️' },
+  { href: '/admin/dashboard', labelKey: 'navDashboard',  icon: '📊' },
+  { href: '/admin/orders',    labelKey: 'navLiveOrders', icon: '🗂️' },
+  { href: '/admin/receipts',  labelKey: 'navReceipts',   icon: '🧾' },
+  { href: '/admin/menu',      labelKey: 'navMenu',       icon: '🍽️' },
 ];
 
 export default function AdminShell({ children }) {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const { t, toggle: toggleLang, lang } = useLang();
 
   if (pathname === '/admin') return <>{children}</>;
 
@@ -29,7 +31,7 @@ export default function AdminShell({ children }) {
     <>
       <div className="px-5 py-6 border-b border-surface-border">
         <h1 className="font-serif font-bold text-gold text-xl">Bella Vista</h1>
-        <p className="text-ink-muted text-xs mt-0.5">Staff Portal</p>
+        <p className="text-ink-muted text-xs mt-0.5">{t('navStaffPortal')}</p>
       </div>
       <nav className="flex-1 px-3 py-4 space-y-1">
         {NAV.map((n) => (
@@ -44,7 +46,7 @@ export default function AdminShell({ children }) {
                 : 'text-ink-secondary hover:bg-surface-elevated hover:text-ink-primary'
             )}
           >
-            <span>{n.icon}</span>{n.label}
+            <span>{n.icon}</span>{t(n.labelKey)}
           </Link>
         ))}
       </nav>
@@ -54,13 +56,19 @@ export default function AdminShell({ children }) {
           onClick={() => setOpen(false)}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-ink-secondary hover:bg-surface-elevated hover:text-ink-primary transition-all"
         >
-          <span>🏠</span> User Portal
+          <span>🏠</span> {t('navUserPortal')}
         </Link>
+        <button
+          onClick={toggleLang}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-ink-secondary hover:bg-surface-elevated hover:text-ink-primary transition-all"
+        >
+          <span>🌐</span> {lang === 'en' ? 'Español' : 'English'}
+        </button>
         <button
           onClick={logout}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-ink-muted hover:bg-surface-elevated hover:text-ink-primary transition-all"
         >
-          <span>🚪</span> Logout
+          <span>🚪</span> {t('navLogout')}
         </button>
       </div>
     </>

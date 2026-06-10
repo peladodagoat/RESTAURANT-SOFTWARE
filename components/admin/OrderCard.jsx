@@ -1,5 +1,7 @@
 'use client';
 
+import { useLang } from '@/lib/LanguageContext';
+
 const STATUS_STYLES = {
   PENDING:     'bg-amber-100 text-amber-700 border border-amber-200',
   IN_PROGRESS: 'bg-blue-100 text-blue-700 border border-blue-200',
@@ -7,8 +9,8 @@ const STATUS_STYLES = {
   CANCELLED:   'bg-surface-elevated text-ink-muted border border-surface-border',
 };
 
-const STATUS_LABELS = {
-  PENDING: 'Pending', IN_PROGRESS: 'In Progress', DELIVERED: 'Delivered', CANCELLED: 'Cancelled',
+const STATUS_KEYS = {
+  PENDING: 'statusPending', IN_PROGRESS: 'statusInProgress', DELIVERED: 'statusDelivered', CANCELLED: 'statusCancelled',
 };
 
 function timeAgo(dateStr) {
@@ -19,6 +21,7 @@ function timeAgo(dateStr) {
 }
 
 export default function OrderCard({ order, onStatusChange }) {
+  const { t } = useLang();
   const time = new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
   return (
@@ -35,10 +38,10 @@ export default function OrderCard({ order, onStatusChange }) {
         </div>
         <div className="flex items-center gap-2 flex-wrap justify-end">
           <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${STATUS_STYLES[order.status]}`}>
-            {STATUS_LABELS[order.status]}
+            {t(STATUS_KEYS[order.status])}
           </span>
           <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-surface-elevated border border-surface-border text-ink-secondary">
-            {order.paymentMethod === 'APPLE_PAY' ? '🍎 Apple Pay' : '💵 Counter'}
+            {order.paymentMethod === 'APPLE_PAY' ? t('payApplePayLabel') : t('payCounterLabel')}
           </span>
         </div>
       </div>
@@ -63,13 +66,12 @@ export default function OrderCard({ order, onStatusChange }) {
         <span className="font-bold text-gold text-base">${order.total.toFixed(2)}</span>
 
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Back buttons */}
           {order.status === 'IN_PROGRESS' && (
             <button
               onClick={() => onStatusChange(order.id, 'PENDING')}
               className="text-xs px-3 py-1.5 rounded-lg border border-surface-border text-ink-secondary hover:border-amber-300 hover:text-amber-700 transition-all"
             >
-              ← Pending
+              {t('backToPending')}
             </button>
           )}
           {order.status === 'DELIVERED' && (
@@ -77,17 +79,15 @@ export default function OrderCard({ order, onStatusChange }) {
               onClick={() => onStatusChange(order.id, 'IN_PROGRESS')}
               className="text-xs px-3 py-1.5 rounded-lg border border-surface-border text-ink-secondary hover:border-blue-300 hover:text-blue-700 transition-all"
             >
-              ← In Progress
+              {t('backToInProgressBtn')}
             </button>
           )}
-
-          {/* Forward buttons */}
           {order.status === 'PENDING' && (
             <button
               onClick={() => onStatusChange(order.id, 'IN_PROGRESS')}
               className="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-xs font-semibold hover:bg-blue-700 transition-colors"
             >
-              Mark In Progress →
+              {t('markInProgress')}
             </button>
           )}
           {order.status === 'IN_PROGRESS' && (
@@ -95,11 +95,11 @@ export default function OrderCard({ order, onStatusChange }) {
               onClick={() => onStatusChange(order.id, 'DELIVERED')}
               className="bg-emerald-600 text-white px-4 py-1.5 rounded-lg text-xs font-semibold hover:bg-emerald-700 transition-colors"
             >
-              Mark Delivered ✓
+              {t('markDelivered')}
             </button>
           )}
           {order.status === 'DELIVERED' && (
-            <span className="text-xs text-emerald-600 font-semibold">✓ Done</span>
+            <span className="text-xs text-emerald-600 font-semibold">{t('doneBadge')}</span>
           )}
         </div>
       </div>

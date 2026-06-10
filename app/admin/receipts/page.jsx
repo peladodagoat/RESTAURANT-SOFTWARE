@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useLang } from '@/lib/LanguageContext';
 
 const PAY_LABEL = { APPLE_PAY: '🍎 Apple Pay', COUNTER: '💵 Pay at Counter' };
 
@@ -11,7 +12,7 @@ function formatDate(iso) {
   });
 }
 
-function ReceiptHTML(order) {
+function ReceiptHTML(order, labels) {
   const lines = order.items.map(i =>
     `<tr>
       <td style="padding:4px 0;color:#555;">${i.quantity}× ${i.menuItem.name}${i.specialInstructions ? ` <em style="color:#999;">(${i.specialInstructions})</em>` : ''}</td>
@@ -23,22 +24,22 @@ function ReceiptHTML(order) {
     <div style="font-family:Georgia,serif;width:320px;margin:0 auto 40px;padding:24px;border:1px solid #ddd;border-radius:12px;page-break-inside:avoid;">
       <div style="text-align:center;margin-bottom:16px;">
         <h2 style="margin:0;font-size:22px;color:#2c1a0e;">Bella Vista</h2>
-        <p style="margin:4px 0 0;font-size:11px;color:#888;">Authentic Italian Cuisine</p>
+        <p style="margin:4px 0 0;font-size:11px;color:#888;">${labels.subtitle}</p>
       </div>
       <hr style="border:none;border-top:1px dashed #ccc;margin:12px 0;"/>
       <div style="font-size:12px;color:#555;margin-bottom:12px;">
-        <div style="display:flex;justify-content:space-between;"><span>Order</span><strong>#${order.id.slice(-6).toUpperCase()}</strong></div>
+        <div style="display:flex;justify-content:space-between;"><span>${labels.orderLabel}</span><strong>#${order.id.slice(-6).toUpperCase()}</strong></div>
         <div style="display:flex;justify-content:space-between;"><span>Table</span><strong>${order.tableId}</strong></div>
-        <div style="display:flex;justify-content:space-between;"><span>Date</span><strong>${formatDate(order.createdAt)}</strong></div>
-        <div style="display:flex;justify-content:space-between;"><span>Payment</span><strong>${order.paymentMethod === 'APPLE_PAY' ? 'Apple Pay' : 'Counter'}</strong></div>
+        <div style="display:flex;justify-content:space-between;"><span>${labels.dateLabel}</span><strong>${formatDate(order.createdAt)}</strong></div>
+        <div style="display:flex;justify-content:space-between;"><span>${labels.paymentLabel}</span><strong>${order.paymentMethod === 'APPLE_PAY' ? 'Apple Pay' : 'Counter'}</strong></div>
       </div>
       <hr style="border:none;border-top:1px dashed #ccc;margin:12px 0;"/>
       <table style="width:100%;border-collapse:collapse;font-size:13px;">${lines}</table>
       <hr style="border:none;border-top:1px solid #ccc;margin:12px 0;"/>
       <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:bold;color:#2c1a0e;">
-        <span>Total</span><span>$${order.total.toFixed(2)}</span>
+        <span>${labels.totalLabel}</span><span>$${order.total.toFixed(2)}</span>
       </div>
-      <p style="text-align:center;font-size:10px;color:#aaa;margin-top:16px;">Thank you for dining with us!</p>
+      <p style="text-align:center;font-size:10px;color:#aaa;margin-top:16px;">${labels.thankYou}</p>
     </div>`;
 }
 
@@ -46,6 +47,7 @@ export default function ReceiptsPage() {
   const [orders, setOrders]     = useState([]);
   const [selected, setSelected] = useState(new Set());
   const [loading, setLoading]   = useState(true);
+  const { t } = useLang();
 
   useEffect(() => {
     fetch('/api/orders')
@@ -65,8 +67,18 @@ export default function ReceiptsPage() {
     setSelected(selected.size === orders.length ? new Set() : new Set(orders.map((o) => o.id)));
   };
 
+  const getLabels = () => ({
+    subtitle:     t('receiptSubtitle'),
+    orderLabel:   t('receiptOrder'),
+    dateLabel:    t('receiptDate'),
+    paymentLabel: t('receiptPayment'),
+    totalLabel:   t('receiptTotal'),
+    thankYou:     t('receiptThankYou'),
+  });
+
   const printOrders = (list) => {
-    const html = list.map(ReceiptHTML).join('');
+    const labels = getLabels();
+    const html = list.map((order) => ReceiptHTML(order, labels)).join('');
     const win  = window.open('', '_blank', 'width=800,height=600');
     win.document.write(`
       <!DOCTYPE html><html><head>
@@ -91,21 +103,21 @@ export default function ReceiptsPage() {
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-6 gap-3 flex-wrap">
-        <h2 className="text-2xl font-serif font-bold text-ink-primary">Receipts</h2>
+        <h2 className="text-2xl font-serif font-bold text-ink-primary">{t('receiptsTitle')}</h2>
         <div className="flex items-center gap-2 flex-wrap">
           {selected.size > 0 && (
             <button
               onClick={printSelected}
               className="flex items-center gap-2 bg-gold text-surface-base px-4 py-2 rounded-xl text-sm font-semibold hover:bg-gold-light transition-colors"
             >
-              🖨️ Print Selected ({selected.size})
+              🖨️ {t('printSelected')} ({selected.size})
             </button>
           )}
           <button
             onClick={printAll}
             className="flex items-center gap-2 bg-surface-card border border-surface-border text-ink-secondary px-4 py-2 rounded-xl text-sm font-semibold hover:border-gold hover:text-gold transition-all"
           >
-            🖨️ Print All
+            🖨️ {t('printAll')}
           </button>
         </div>
       </div>
@@ -120,16 +132,16 @@ export default function ReceiptsPage() {
             onChange={toggleAll}
             className="accent-gold w-4 h-4"
           />
-          Select all ({orders.length} receipts)
+          {t('selectAll')} ({orders.length} {t('receiptsTitle').toLowerCase()})
         </label>
       )}
 
       {loading ? (
-        <p className="text-ink-muted animate-pulse text-sm">Loading receipts…</p>
+        <p className="text-ink-muted animate-pulse text-sm">{t('loadingReceipts')}</p>
       ) : orders.length === 0 ? (
         <div className="text-center py-20 text-ink-muted">
           <div className="text-4xl mb-3">🧾</div>
-          <p className="text-sm">No receipts yet.</p>
+          <p className="text-sm">{t('noReceipts')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -180,7 +192,7 @@ export default function ReceiptsPage() {
                   onClick={(e) => { e.stopPropagation(); printOrders([order]); }}
                   className="text-xs text-ink-secondary hover:text-gold transition-colors flex items-center gap-1"
                 >
-                  🖨️ Print
+                  {t('printBtn')}
                 </button>
               </div>
             </div>
